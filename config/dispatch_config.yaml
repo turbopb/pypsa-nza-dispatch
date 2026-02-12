@@ -1,0 +1,97 @@
+# ============================================================================
+# PyPSA-NZA Dispatch Validation Configuration
+# ============================================================================
+#
+# This configuration file points to your external data directory containing:
+#   - Pre-built PyPSA networks (from nza_cx_net.py and nza_cx_customize.py)
+#   - Static network data (buses, lines, generators)
+#   - Cost data
+#   - MBIE scenario data
+#
+# REQUIRED: Update the 'root' path below to match your analysis directory
+# ============================================================================
+
+paths:
+  # CRITICAL: Set this to your main analysis/data directory
+  # This is where your pre-built networks and data reside
+  #
+  # Examples:
+  #   Linux:   /home/pbrun/thesis/analysis
+  #   Windows: C:/Users/Public/Documents/Thesis/analysis
+  #
+  root: "C:/Users/Public/Documents/Thesis/analysis"
+  
+  # Directory paths (relative to root)
+  dirpath_static: "data/processed/static/"
+  dirpath_costs: "data/costs/"
+  dirpath_mbie: "data/external/mbie/"
+
+filename:
+  bus_data: "busses.csv"
+  line_data: "lines_data.csv"
+  link_data: "links_data.csv"
+  gen_data: "gen_data.csv"
+  costs_file: "nz_energy_tech_costs_2023_nzd.yaml"
+
+# Base year configuration
+base_year: 2024
+scenario: "reference"
+
+# MBIE demand growth scenarios
+# These are scaling factors relative to the base year
+# Format: year: scaling_factor
+demand_scenarios:
+  reference:
+    2024: 1.0
+    2025: 1.0266173752310535
+    2026: 1.0449291435613062
+    2027: 1.074947627849661
+    2028: 1.0928157732593962
+    2029: 1.120369685767098
+    2030: 1.1381638940234133
+    2031: 1.158570548367221
+    2032: 1.1787553912507702
+    2033: 1.1987184226740601
+    2034: 1.2204066543438077
+    2035: 1.2446826863832408
+    2036: 1.2706592729513246
+    2037: 1.2973012939001847
+    2038: 1.3246087492298213
+    2039: 1.3517683302526184
+    2040: 1.37818853974122
+    2041: 1.4027603203943315
+    2042: 1.4237584719654959
+    2043: 1.4423413431916203
+    2044: 1.457917436845348
+    2045: 1.4723844731977818
+    2046: 1.4858656808379542
+    2047: 1.4984349969192852
+    2048: 1.5105606900800983
+    2049: 1.520098582871226
+    2050: 1.5294146642020947
+
+# Dispatch validation settings
+dispatch:
+  # Default solver
+  solver: "highs"
+  
+  # Load shedding cost ($/MWh)
+  # Very high cost ensures shedding only occurs when unavoidable
+  load_shed_marginal_cost: 10000.0
+  
+  # Stress test settings
+  stop_on_massive_failure: true
+  massive_failure_threshold: 0.5  # Stop if >50% load shed
+
+# Network locations
+# Networks must be in: {root}/cases/reference/{year}/{month}_{year}/
+# Example: C:/Users/Public/Documents/Thesis/analysis/cases/reference/2024/apr_2024/
+networks:
+  base_path: "cases/reference/"
+  months: ["jan", "feb", "mar", "apr", "may", "jun", "jul", "aug", "sep", "oct", "nov", "dec"]
+
+# Output settings
+output:
+  base_dir: "results/dispatch_validation/"
+  save_detailed_diagnostics: true
+  save_network_snapshots: false  # Set true to save optimized networks (large files)

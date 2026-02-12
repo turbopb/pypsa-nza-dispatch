@@ -1,0 +1,62 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pypsa-nza-dispatch"
+version = "0.1.0"
+description = "Dispatch validation and capacity adequacy stress testing for PyPSA-NZ networks"
+readme = "README.md"
+authors = [
+    {name = "Phillippe Bruneau", email = "phillippe.bruneau@xtra.co.nz"}
+]
+license = {text = "MIT"}
+requires-python = ">=3.9,<3.12"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering",
+]
+keywords = ["pypsa", "energy systems", "dispatch validation", "power systems"]
+
+dependencies = [
+    "pypsa>=0.28.0",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "pyyaml>=6.0",
+    "matplotlib>=3.7.0",
+    "cartopy>=0.22.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=23.0.0",
+    "flake8>=6.0.0",
+    "ipython>=8.0.0",
+]
+
+[project.scripts]
+nza-dispatch-validate = "pypsa_nza_dispatch.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/yourusername/pypsa-nza-dispatch-validation"
+Repository = "https://github.com/yourusername/pypsa-nza-dispatch-validation"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pypsa_nza_dispatch*"]
+
+[tool.black]
+line-length = 100
+target-version = ['py39', 'py310', 'py311']
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
