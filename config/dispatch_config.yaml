@@ -12,8 +12,8 @@
 # ============================================================================
 
 paths:
-  # CRITICAL: Set this to your main analysis/data directory
-  # This is where your pre-built networks and data reside
+  # CRITICAL: Set this to your main analysis/data directory.
+  # This is where your pre-built networks and data reside.
   #
   # Examples:
   #   Linux:   /home/pbrun/thesis/analysis
