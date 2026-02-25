@@ -51,10 +51,23 @@ def run_dispatch(
             solver_options=solver_options
         )
 
+        # Check if optimization succeeded
+        # PyPSA can return different status formats
+        success = False
+        if isinstance(status, str):
+            success = (status == 'ok')
+        elif isinstance(status, tuple):
+            success = (status[0] == 'ok')
+        elif hasattr(status, 'status'):
+            success = (status.status == 'ok')
+        else:
+            # If we can't determine status, check if network has results
+            success = hasattr(network, 'objective') and network.objective is not None
+
         # Calculate diagnostics
         diagnostics = calculate_diagnostics(network)
 
-        return (status == 'ok', diagnostics)
+        return (success, diagnostics)
 
     except Exception as e:
         print(f"  ✗ Optimization failed: {e}")

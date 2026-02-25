@@ -141,6 +141,12 @@ def add_load_shedding_generators(
     if verbose:
         print_heading("ADDING LOAD SHEDDING GENERATORS", char='=')
 
+    # Add load_shedding carrier if it doesn't exist
+    if "load_shedding" not in network.carriers.index:
+        network.add("Carrier", "load_shedding", co2_emissions=0.0, color="red")
+        if verbose:
+            print("  ✓ Added 'load_shedding' carrier")
+
     # Get all buses with loads
     load_buses = network.loads['bus'].unique()
 
