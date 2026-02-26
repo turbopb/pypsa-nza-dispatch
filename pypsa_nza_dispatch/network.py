@@ -84,28 +84,28 @@ def fix_all_capacities(network: pypsa.Network, verbose: bool = True) -> pypsa.Ne
         extendable_count = network.generators['p_nom_extendable'].sum()
         network.generators['p_nom_extendable'] = False
         if verbose:
-            print(f"  ✓ Fixed {extendable_count} extendable generators")
+            print(f"  Fixed {extendable_count} extendable generators")
 
     # Fix storage units (if present)
     if len(network.storage_units) > 0 and 'p_nom_extendable' in network.storage_units.columns:
         extendable_count = network.storage_units['p_nom_extendable'].sum()
         network.storage_units['p_nom_extendable'] = False
         if verbose:
-            print(f"  ✓ Fixed {extendable_count} extendable storage units")
+            print(f"  Fixed {extendable_count} extendable storage units")
 
     # Fix transmission lines
     if 's_nom_extendable' in network.lines.columns:
         extendable_count = network.lines['s_nom_extendable'].sum()
         network.lines['s_nom_extendable'] = False
         if verbose:
-            print(f"  ✓ Fixed {extendable_count} extendable lines")
+            print(f"  Fixed {extendable_count} extendable lines")
 
     # Fix HVDC links
     if len(network.links) > 0 and 'p_nom_extendable' in network.links.columns:
         extendable_count = network.links['p_nom_extendable'].sum()
         network.links['p_nom_extendable'] = False
         if verbose:
-            print(f"  ✓ Fixed {extendable_count} extendable links")
+            print(f"  Fixed {extendable_count} extendable links")
 
     return network
 
@@ -145,7 +145,7 @@ def add_load_shedding_generators(
     if "load_shedding" not in network.carriers.index:
         network.add("Carrier", "load_shedding", co2_emissions=0.0, color="red")
         if verbose:
-            print("  ✓ Added 'load_shedding' carrier")
+            print("  Added 'load_shedding' carrier")
 
     # Get all buses with loads
     load_buses = network.loads['bus'].unique()
@@ -163,7 +163,7 @@ def add_load_shedding_generators(
         )
 
     if verbose:
-        print(f"  ✓ Added {len(load_buses)} load shedding generators")
+        print(f"  Added {len(load_buses)} load shedding generators")
         print(f"  Marginal cost: ${marginal_cost:,.0f}/MWh")
 
     return network

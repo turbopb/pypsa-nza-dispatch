@@ -70,7 +70,7 @@ def run_dispatch(
         return (success, diagnostics)
 
     except Exception as e:
-        print(f"  ✗ Optimization failed: {e}")
+        print(f"   Optimization failed: {e}")
         return (False, {})
 
 
@@ -149,7 +149,7 @@ def run_stress_test(
 
         if not success:
             if verbose:
-                print(f"    ✗ Optimization failed")
+                print(f"     Optimization failed")
             continue
 
         # Store results
@@ -176,7 +176,7 @@ def run_stress_test(
         if (stop_on_massive_failure and 
             diagnostics['load_shed_fraction'] > massive_failure_threshold):
             if verbose:
-                print(f"    → Stopping test - system far beyond capacity")
+                print(f"     Stopping test - system far beyond capacity")
             break
 
     return pd.DataFrame(results_list)
@@ -225,7 +225,7 @@ def validate_single_scenario(
     elapsed = time.time() - start_time
 
     if not success:
-        print("✗ Optimization failed")
+        print(" Optimization failed")
         return {}
 
     diagnostics['solve_time_s'] = elapsed

@@ -192,7 +192,7 @@ def generate_report(
         output_path.parent.mkdir(parents=True, exist_ok=True)
         results_df.to_csv(output_path, index=False)
         if verbose:
-            print(f"\n✓ Results saved to: {output_path}")
+            print(f"\n Results saved to: {output_path}")
 
     return results_df
 
@@ -211,11 +211,11 @@ def print_diagnostics_summary(diagnostics: Dict, scaling_factor: float) -> None:
     growth_pct = (scaling_factor - 1) * 100
 
     if diagnostics['status'] == 'ADEQUATE':
-        print(f"    ✓ ADEQUATE - no load shedding")
+        print(f"    ADEQUATE - no load shedding")
     else:
         load_shed = diagnostics['total_load_shed_MWh']
         shed_frac = diagnostics['load_shed_fraction']
-        print(f"    ✗ INADEQUATE - {format_mwh(load_shed)} shed ({shed_frac*100:.2f}%)")
+        print(f"    INADEQUATE - {format_mwh(load_shed)} shed ({shed_frac*100:.2f}%)")
         print(f"      Buses with shedding: {diagnostics['buses_with_shedding']}")
         print(f"      Max line loading: {diagnostics['max_line_loading']*100:.1f}%")
 

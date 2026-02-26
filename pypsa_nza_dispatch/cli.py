@@ -141,7 +141,7 @@ def main():
         config = load_config(args.config)
         validate_data_paths(config)
     except Exception as e:
-        print(f"\n✗ Configuration error: {e}")
+        print(f"\n Configuration error: {e}")
         return 1
 
     # Extract scenario from config if not overridden
@@ -160,7 +160,7 @@ def main():
     try:
         network = load_base_network(config, args.year, args.month)
     except Exception as e:
-        print(f"\n✗ Failed to load network: {e}")
+        print(f"\n Failed to load network: {e}")
         return 1
 
     # Prepare network
@@ -212,7 +212,7 @@ def main():
                 args.max_year
             )
         except Exception as e:
-            print(f"\n✗ Failed to get MBIE scaling factors: {e}")
+            print(f"\n Failed to get MBIE scaling factors: {e}")
             return 1
 
         if verbose:
@@ -235,7 +235,7 @@ def main():
     elapsed = time.time() - start_time
     if verbose:
         print(f"\n{'='*60}")
-        print(f"✓ Validation complete")
+        print(f" Validation complete")
         print(f"  Time: {elapsed:.1f}s ({elapsed/60:.1f} min)")
         print(f"{'='*60}\n")
 
