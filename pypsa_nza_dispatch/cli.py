@@ -1,8 +1,97 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
-Command-line interface for PyPSA-NZA dispatch validation.
+cli.py
 
-Provides a user-friendly CLI for running stress tests and single scenario
-validations with configurable parameters.
+Description:
+    Command-line interface for the PyPSA-NZA dispatch validation package.
+
+    Provides a user-friendly CLI for running stress tests and single scenario
+    validations with configurable parameters.
+
+Background:
+    After download from the GitHub reoo, there should br several modules in the 
+    pypsa_nza_dispatch directory, i.e.
+    
+    Mode                 LastWriteTime         Length Name
+    ----                 -------------         ------ ----
+    d-----        26/02/2026   1:11 pm                __pycache__
+    -a----        26/02/2026   1:07 pm           6757 cli.py
+    -a----        26/02/2026  12:00 pm           7547 diagnostics.py
+    -a----        26/02/2026  11:39 am           7085 network.py
+    -a----        12/02/2026   7:27 pm           4074 utils.py
+    -a----        26/02/2026  12:27 pm           7640 validate.py
+    -a----        12/02/2026   7:27 pm            990 __init__.py
+
+    Module 'cli.py' is the top level orchestrater that directs the execution of 
+    appropriate functionality from the modules (diagnostics.py, network.py, utils.py
+    and validate.py) based on what is specified on the command line invocation.
+    
+    However, it should also be noted that 'cli.py' is executed indirectly via the     
+    "nza-dispatch-validate" command which points to "cli.py" inside the pyproject.toml:
+        
+        .....
+        [project.scripts]
+        nza-dispatch-validate = "pypsa_nza_dispatch.cli:main"
+        .....
+    
+    In simplistic terms this tells Python: "When someone types "nza-dispatch-validate", 
+    run the main() function from pypsa_nza_dispatch/cli.py".
+
+Workflow:        
+    The following is a typical ommand line invocation and sequence:  
+        
+        nza-dispatch-validate --config config.yaml --year 2024 --month jan    
+         ↓
+        cli.py main()
+             ↓
+        1. Parse arguments
+             ↓
+        2. network.py → load_network()
+             ↓
+        3. validate.py → run_stress_test()
+             ↓
+        4. diagnostics.py → analyze_results()
+             ↓
+        5. Save CSV output
+    
+    How the Modules Work Together
+    
+    cli.py - 
+    The orchestrator (entry point)
+    Parses command-line arguments (--year, --month, --config, etc.)
+    Calls functions from other modules in sequence
+    Controls the overall workflow
+    
+    network.py - 
+    Network loading and preparation
+    Loads PyPSA network from CSV files
+    Adds load shedding generators
+    Prepares network for optimization
+    
+    validate.py - 
+    Runs validation/stress testing
+    Scales demand by MBIE factors
+    Runs dispatch optimization (calls HiGHS solver)
+    Collects results for different scaling factors
+    
+    diagnostics.py - 
+    Analyzes results
+    Calculates load shedding metrics
+    Identifies transmission bottlenecks
+    Determines if generation or transmission constrained
+    
+    utils.py - 
+    Helper functions
+    File I/O utilities
+    Data processing helpers
+    Common functions used by other modules
+    
+Type "nza-dispatch-validate --help" to get a listing of various command-line
+options. (NOTE: you don't rutn 'python').
+
+Author: Phillippe Bruneau
+Modified: 2025-01
 """
 
 import sys
