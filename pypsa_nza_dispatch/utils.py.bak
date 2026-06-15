@@ -48,43 +48,14 @@ def validate_data_paths(config: Dict) -> bool:
     return True
 
 
-def get_network_path(config: Dict, year: int, month: str,
-                     scenario: str = None) -> Path:
+def get_network_path(config: Dict, year: int, month: str) -> Path:
     """
     Get path to network directory.
-
-    Reads base_path from config['scenarios'][scenario]['base_path'].
-    If scenario is not supplied, falls back to the legacy
-    config['networks']['base_path'] key for backward compatibility.
-
-    Parameters
-    ----------
-    config : dict
-        Configuration dictionary.
-    year : int
-        Planning year.
-    month : str
-        Month abbreviation (e.g. 'jan').
-    scenario : str, optional
-        Scenario name (e.g. 'reference', 'innovation').
-
-    Returns
-    -------
-    Path
-        Full path to the network CSV folder.
+    Reads base_path from config['networks']['base_path'] if available,
+    otherwise falls back to 'cases/reference/'.
     """
     root = Path(config['paths']['root'])
-    if scenario is not None:
-        try:
-            base_path = config['scenarios'][scenario]['base_path']
-        except KeyError:
-            raise ValueError(
-                f"Scenario '{scenario}' not found in config['scenarios']. "
-                f"Available: {list(config.get('scenarios', {}).keys())}"
-            )
-    else:
-        # Legacy fallback
-        base_path = config.get('networks', {}).get('base_path', 'cases/reference/')
+    base_path = config.get('networks', {}).get('base_path', 'cases/reference/')
     network_path = root / base_path / str(year) / f"{month}_{year}"
     return network_path
 
@@ -109,4 +80,3 @@ def format_mw(mw: float) -> str:
         return f"{mw/1e3:.2f} GW"
     else:
         return f"{mw:.1f} MW"
-

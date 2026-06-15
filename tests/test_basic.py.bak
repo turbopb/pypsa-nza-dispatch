@@ -54,8 +54,8 @@ def test_config_loading():
             'root': '/tmp/test',
             'dirpath_static': 'data/static',
         },
-        'validation_year': 2024,
-        'planning_base_year': 2025,
+        'base_year': 2024,
+        'scenario': 'reference',
     }
     
     with tempfile.NamedTemporaryFile(mode='w', suffix='.yaml', delete=False) as f:
@@ -64,7 +64,8 @@ def test_config_loading():
     
     try:
         config = load_config(config_path)
-        assert config['validation_year'] == 2024
+        assert config['base_year'] == 2024
+        assert config['scenario'] == 'reference'
     finally:
         Path(config_path).unlink()
 
@@ -74,14 +75,12 @@ def test_scaling_factors_extraction():
     from pypsa_nza_dispatch.network import get_mbie_scaling_factors
     
     test_config = {
-        'scenarios': {
+        'demand_scenarios': {
             'reference': {
-                'demand_factors': {
-                    2024: 1.0,
-                    2025: 1.027,
-                    2026: 1.045,
-                    2027: 1.075,
-                }
+                2024: 1.0,
+                2025: 1.027,
+                2026: 1.045,
+                2027: 1.075,
             }
         }
     }
@@ -149,4 +148,3 @@ def test_format_utilities():
 
 if __name__ == '__main__':
     pytest.main([__file__, '-v'])
-

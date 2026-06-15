@@ -11,8 +11,7 @@ import pypsa
 from pypsa_nza_dispatch.utils import get_network_path, print_heading
 
 
-def load_base_network(config: Dict, year: int, month: str,
-                      scenario: str = None) -> pypsa.Network:
+def load_base_network(config: Dict, year: int, month: str) -> pypsa.Network:
     """
     Load a customized network from disk.
 
@@ -27,9 +26,6 @@ def load_base_network(config: Dict, year: int, month: str,
         Network year
     month : str
         Month abbreviation (e.g., 'jan', 'apr')
-    scenario : str, optional
-        Scenario name (e.g. 'reference', 'innovation'). If supplied,
-        the network path is resolved from config['scenarios'][scenario].
 
     Returns
     -------
@@ -41,7 +37,7 @@ def load_base_network(config: Dict, year: int, month: str,
     FileNotFoundError
         If network directory not found
     """
-    network_path = get_network_path(config, year, month, scenario=scenario)
+    network_path = get_network_path(config, year, month)
 
     if not network_path.exists():
         raise FileNotFoundError(f"Network not found: {network_path}")
@@ -229,16 +225,13 @@ def get_mbie_scaling_factors(
     ValueError
         If scenario not found in config
     """
-    if 'scenarios' not in config:
-        raise ValueError("Configuration missing 'scenarios' section")
+    if 'demand_scenarios' not in config:
+        raise ValueError("Configuration missing 'demand_scenarios' section")
 
-    if scenario not in config['scenarios']:
-        raise ValueError(
-            f"Scenario '{scenario}' not found in config['scenarios']. "
-            f"Available: {list(config['scenarios'].keys())}"
-        )
+    if scenario not in config['demand_scenarios']:
+        raise ValueError(f"Scenario '{scenario}' not found in configuration")
 
-    growth_factors = config['scenarios'][scenario]['demand_factors']
+    growth_factors = config['demand_scenarios'][scenario]
 
     # Filter years
     factors = []
@@ -248,4 +241,3 @@ def get_mbie_scaling_factors(
                 factors.append(factor)
 
     return sorted(set(factors))  # Remove duplicates and sort
-

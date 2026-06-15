@@ -3,47 +3,37 @@ paths:
   dirpath_static: data/processed/static/
   dirpath_costs: data/costs/
   dirpath_mbie: data/external/mbie/
-
 filename:
   bus_data: busses.csv
   line_data: lines_data.csv
   link_data: links_data.csv
   gen_data: gen_data.csv
   costs_file: nz_energy_tech_costs_2023_nzd.yaml
-
-validation_year: 2024
-planning_base_year: 2025
-
-scenarios:
+base_year: 2024
+scenario: reference_v2
+demand_scenarios:
   reference:
-    base_path: dispatch_data/cases/reference_v2/
-    results_dir: pypsa-nza-heuristic/results/validation/reference_v2/
-    demand_factors:
-      2025: 1.0
-      2030: 1.108654
-      2035: 1.212411
-      2040: 1.342456
-      2045: 1.43421
-      2050: 1.489761
+    2025: 1.0
+    2030: 1.108654
+    2035: 1.212411
+    2040: 1.342456
+    2045: 1.43421
+    2050: 1.489761
   innovation:
-    base_path: dispatch_data/cases/innovation_v1/
-    results_dir: pypsa-nza-heuristic/results/validation/innovation_v1/
-    demand_factors:
-      2025: 1.0
-      2030: 1.229343
-      2035: 1.425621
-      2040: 1.559008
-      2045: 1.64072
-      2050: 1.692207
-
+    2025: 1.0
+    2030: 1.229343
+    2035: 1.425621
+    2040: 1.559008
+    2045: 1.64072
+    2050: 1.692207
+  base_year: 2025
 dispatch:
   solver: highs
-  solver_threads: 1
   load_shed_marginal_cost: 10000.0
   stop_on_massive_failure: true
   massive_failure_threshold: 0.5
-
 networks:
+  base_path: dispatch_data/cases/reference_v2/
   months:
   - jan
   - feb
@@ -57,7 +47,7 @@ networks:
   - oct
   - nov
   - dec
-
 output:
+  base_dir: results/dispatch_validation_v2/
   save_detailed_diagnostics: true
   save_network_snapshots: false

@@ -1,0 +1,123 @@
+The attached sketch illustrates a typical segment of the electrical transmission line
+network in New Zealand and how data is supplied by Transpower and the Electrical 
+Authority.
+
+Transpower provides a shapefile that contains the data defining the transmission lines,
+saved to "C://Users\Public/Documents/Thesis/analysis/pypsa-nza-lines/Transline/Transline.shp"
+on my system.  There is also geographic location data (Eastings and Northings, lat and long) 
+for all node points (eg. ROX, CYD, CML TWZ etc)
+
+In the attached sketch, a line named "ROX-TWZ-A" is shown where 'ROX' and 'TWZ' are
+3 letter acronyms for the start and end points (nodes), 'Roxburgh' and 'Twizel' respectfully.
+Two other intermediate locations are also located on the "ROX-TWZ-A" line, namely Clyde (CYD) 
+and Cromwell (CML).  However, there is no direct way of knowing what intermediate points
+are on the line. One way is to plot the lines and all node points (eg. CYD, CML TWZ etc)
+on the same QGIS map and then visually inspect the plot. This is how I created the sketch.
+
+A second possibilily is to read in a line and then check all node points to determine
+what nodes fall on the line. whilst that approach is possibly time consuming, that 
+effort  
+
+Here is a mofification of the code you suggested previously that works well.  I have 
+verfied the distances clulated and they are correct.  What is tells me is that the 
+fundamental approach is good:
+  
+---------------------------------------------------------------------------------  
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Mar 14 12:48:59 2026
+
+@author: OEM
+"""
+
+from shapely.geometry import Point
+from shapely.wkt import loads
+import geopandas as gpd
+
+# Load your line data
+lines = gpd.read_file("C://Users\Public/Documents/Thesis/analysis/pypsa-nza-lines/Transline/Transline.shp")
+
+# Get the line (assuming it's a single merged geometry
+name_1 = 'INV-TWI-A'
+name_2 = 'INV-MAN-A'
+name_3 = 'MAN-TWI-A'
+
+line_1 = lines[lines['MXLOCATION'] == name_1].geometry.iloc[0]
+line_2 = lines[lines['MXLOCATION'] == name_2].geometry.iloc[0]
+line_3 = lines[lines['MXLOCATION'] == name_2].geometry.iloc[0]
+
+# line_1 = lines[lines['MXLOCATION'] == 'INV-TWI-A'].geometry.iloc[0]
+# line_2 = lines[lines['MXLOCATION'] == 'INV-MAN-A'].geometry.iloc[0]
+# line_3 = lines[lines['MXLOCATION'] == 'MAN-TWI-A'].geometry.iloc[0]
+
+print(f"INV-TWI: {line_1.length/1000:.1f} km") 
+print(f"INV-MAN: {line_2.length/1000:.1f} km") 
+print(f"MAN-TWI: {line_3.length/1000:.1f} km") 
+
+# Define node NMA from coordinate data
+#    X	        Y	   long	        lat
+# 1242674	4861597	168.359526	-46.304941
+
+lon_c = 168.359526
+lat_c = -46.304941
+X_c = 1242674
+Y_c = 4861597
+
+
+P_NMA = Point(X_c, Y_c)  # NZTM easting, northing
+
+dist_TWI_NMA = line_3.project(P_NMA)
+print(f"TWI_NMA: {dist_TWI_NMA/1000:.1f} km")
+
+dist_MAN_NMA = line_3.length - dist_TWI_NMA
+print(f"MAN_NMA: {dist_MAN_NMA/1000:.1f} km")   
+   
+---------------------------------------------------------------------------------   
+   
+So what i would like like you you to do is write me a complete python program using 
+best practice that will improve and extend the code I have have provided above, taking 
+into account what i have already described.  The following
+features and capabilities must be included.
+
+1. read in the specification from a yaml file. the specification in the yaml file 
+must include the path of data files - lines shape file, node points on the line, 
+node file path containing the geographic coordinates of all node poits an d anything else that is required.
+
+2. Determine the distances between consecutive node points on the line and the 
+entire line legnth from start node to end node.  
+Verify by comparing the entire line legnth to that provided in the shape file.    
+
+
+Here are the first few lines of the "nodes.csv" file saved to 
+"C:\Users\Public\Documents\Thesis\analysis\dispatch_data\data\manual\nodes.csv"
+on my system:
+name	site	zone	island	volts	X	Y	long	lat
+Albury	ABY	LSI	SI	11	1424397	5097843	170.800433	-44.251476
+Addington	ADD	USI	SI	11	1567884	5179259	172.602487	-43.538924
+Arahura	AHA	USI	SI	11	1436219	5271631	171.000667	-42.690363
+Albany	ALB	UNI	NI	33	1750929	5932699	174.690466	-36.739446
+Arohena	ANA	CNI	NI	11	1830160	5769602	175.628145	-38.192133
+Arthurs Pass	APS	USI	SI	11	1483256	5243850	171.568898	-42.949046
+Aratiatia	ARA	CNI	NI	220	1873657	5721161	176.143036	-38.615882
+Argyle	ARG	USI	SI	110	1616837	5386748	173.202263	-41.670851
+Arapuni	ARI	CNI	NI	110	1831847	5782925	175.643058	-38.071752
+Ashburton	ASB	USI	SI	66	1503871	5133909	171.802173	-43.941664
+Ashley	ASY	USI	SI	11	1569375	5209968	172.622662	-43.262475
+
+
+
+CSV representation of the "Transline.shp" file, ("C:\Users\Public\Documents\Thesis\analysis\pypsa-nza-lines\Transmission_Lines.csv")
+Total line length given in the last column
+OBJECTID	MXLOCATION	designvolt	status	description	type	Symbol	GlobalID	Shape__Length
+1	AHA-DOB-A	66	COMMISSIONED	Arahura - Dobson A	TRANSLINE	66 TRANSLINE	ad252f27-d328-4466-accb-0a0503a74c25	8857.46549677658
+2	AHA-DOB-A1-CBL	66	COMMISSIONED	AHA-DOB-A1-CBL Section	CABLE	66 CABLE	6aea6915-9bcc-469a-a3c7-d1df360164ed	470.196468692008
+3	AHA-OTI-A	66	COMMISSIONED	Arahura - Otira A	TRANSLINE	66 TRANSLINE	fb5181f7-6a47-452d-97ac-3b555a4295cf	63423.273782818
+4	ALB-HPI-A	220	COMMISSIONED	Albany - Huapai A	TRANSLINE	220 TRANSLINE	ff2a1dc5-0720-458a-9214-00f50fc51e72	14887.8050679823
+5	ALB-SVL-A	220	COMMISSIONED	Albany - Silverdale A	TRANSLINE	220 TRANSLINE	f8d577c9-7441-4b1a-9e2a-8bbbc83b3b9a	14346.2632928135
+6	ALB-WRD-C-CBL	220	COMMISSIONED	Albany - Wairau Road Cable C	CABLE	220 CABLE	ab7b3122-6951-4ede-b56d-1baac89e1248	8372.8233808627
+7	ARA-WRK-A	220	COMMISSIONED	Aratiatia - Wairakei A	TRANSLINE	220 TRANSLINE	ed1fee44-c065-44b5-9832-5a2f1ed4cfca	4564.26499099791
+....                  ......                           .....                     ......                                 ...... ..        ......
+231	ROX-TWZ-A	220	COMMISSIONED	Roxburgh - Twizel A	TRANSLINE	220 TRANSLINE	3cebe473-7cf0-4c1e-adee-410032d31133	175153.700431391
+1838	WRK-WKM-A	220	COMMISSIONED	Wairakei - Whakamaru A	TRANSLINE	220 TRANSLINE	f0d90453-a69a-4c5d-ba69-aa38a601997a	57035.9474438905
+1840	JRD-TEE-A	110	COMMISSIONED	Junction Road - Tee A	TRANSLINE	110 TRANSLINE	94650a68-d109-4ce6-98b7-b9b67b185150	424.564079698654
+   
